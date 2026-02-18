@@ -1,6 +1,3 @@
-import './style.css'
-import { PROJECTS } from './data.js'
-
 // ── Footer Year ──
 document.getElementById('year').textContent = new Date().getFullYear();
 
