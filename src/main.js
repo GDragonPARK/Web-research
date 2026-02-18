@@ -1,29 +1,24 @@
 import './style.css'
+import { PROJECTS } from './data.js'
 
-// Set current year in footer
+// ── Footer Year ──
 document.getElementById('year').textContent = new Date().getFullYear();
 
-// Smooth scrolling for navigation links
+// ── Smooth Scroll ──
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
     e.preventDefault();
-    const targetId = this.getAttribute('href');
-    const targetElement = document.querySelector(targetId);
-
-    if (targetElement) {
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
       window.scrollTo({
-        top: targetElement.offsetTop - 80, // Offset for fixed nav
+        top: target.offsetTop - 80,
         behavior: 'smooth'
       });
     }
   });
 });
 
-// Scroll Reveal Animation (Simple Implementation)
-const observerOptions = {
-  threshold: 0.1
-};
-
+// ── Scroll Reveal ──
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -31,7 +26,7 @@ const observer = new IntersectionObserver((entries) => {
       entry.target.style.transform = 'translateY(0)';
     }
   });
-}, observerOptions);
+}, { threshold: 0.1 });
 
 const revealOnScroll = (elements) => {
   elements.forEach(el => {
@@ -42,7 +37,46 @@ const revealOnScroll = (elements) => {
   });
 };
 
-revealOnScroll(document.querySelectorAll('.card'));
+// ── Dynamic Project Rendering ──
+function renderProjects() {
+  const grid = document.getElementById('projects-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  PROJECTS.forEach((project, index) => {
+    const isWIP = project.status === 'WIP';
+    const card = document.createElement('div');
+    card.className = `card${isWIP ? ' card--wip' : ''}`;
+    card.style.animationDelay = `${index * 0.1}s`;
+
+    const shortLabel = project.title.includes(':')
+      ? project.title.split(':')[0].trim()
+      : project.title.substring(0, 12);
+
+    card.innerHTML = `
+      <div class="project-img">
+        <span class="project-img__label">${shortLabel}</span>
+      </div>
+      <div class="card__header">
+        <h3>${project.title}</h3>
+        ${isWIP
+        ? '<span class="card__badge card__badge--wip">🚧 준비 중</span>'
+        : '<span class="card__badge card__badge--ready">✦ Ready</span>'}
+      </div>
+      <p>${project.summary}</p>
+      <div class="card__tags">
+        ${project.tags.map(t => `<span class="skill-tag skill-tag--sm">${t}</span>`).join('')}
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+
+  // Apply scroll reveal to dynamically created cards
+  revealOnScroll(grid.querySelectorAll('.card'));
+}
+
+// ── Init ──
+renderProjects();
 revealOnScroll(document.querySelectorAll('.skill-tag'));
 revealOnScroll(document.querySelectorAll('.section-title'));
-
