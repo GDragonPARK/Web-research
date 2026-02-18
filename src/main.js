@@ -43,53 +43,41 @@ function renderProjects() {
   if (!grid) return;
   grid.innerHTML = '';
 
-  PROJECTS.forEach((project) => {
+  PROJECTS.forEach((project, index) => {
     const isWIP = project.status === 'WIP';
     const card = document.createElement('div');
-    card.className = `card${isWIP ? ' card--wip' : ''}`;
+    card.className = `card card--animate${isWIP ? ' card--wip' : ''}`;
+    card.style.animationDelay = `${index * 0.15}s`;
 
     // Click → navigate (Ready only)
     if (!isWIP) {
       card.addEventListener('click', () => {
-        console.log(`Navigating to project ${project.id}`);
         window.location.href = `./view.html?id=${project.id}`;
       });
     }
 
-    // Image: real <img> or gradient placeholder
-    const shortLabel = project.title.includes(':')
-      ? project.title.split(':')[0].trim()
-      : project.title.substring(0, 12);
+    // Button label
+    const btnClass = isWIP ? 'btn-disabled' : 'btn-primary';
+    const btnText = isWIP ? '준비 중 (WIP)' : 'Read Report →';
 
-    const imageHtml = project.image
-      ? `<div class="card__image"><img src="${project.image}" alt="${project.title}"></div>`
-      : `<div class="project-img"><span class="project-img__label">${shortLabel}</span></div>`;
-
-    // Tags
-    const tagsHtml = project.tags
-      .map(t => `<span class="skill-tag skill-tag--sm">${t}</span>`)
-      .join('');
+    // Tags with # prefix
+    const tagsHtml = project.tags.map(t => `<span>#${t}</span>`).join(' ');
 
     card.innerHTML = `
-      ${imageHtml}
-      <div class="card__header">
-        <h3>${project.title}</h3>
-        ${isWIP
-        ? '<span class="card__badge card__badge--wip">🚧 준비 중</span>'
-        : '<span class="card__badge card__badge--ready">✦ Ready</span>'}
+      <div class="card-img-holder">
+        <img src="${project.image}" alt="${project.title}">
       </div>
-      <p>${project.summary}</p>
-      <div class="card__tags">${tagsHtml}</div>
-      ${!isWIP ? '<div class="card__footer"><span class="read-more">리서치 보기 <span class="arrow">→</span></span></div>' : ''}
+      <div class="card-content">
+        <div class="tags">${tagsHtml}</div>
+        <h3>${project.title}</h3>
+        <p>${project.summary}</p>
+        <div class="card-action">
+          <button class="${btnClass}">${btnText}</button>
+        </div>
+      </div>
     `;
 
     grid.appendChild(card);
-
-    // Scroll reveal — explicit per-card observer registration
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(30px)';
-    card.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
-    observer.observe(card);
   });
 }
 
