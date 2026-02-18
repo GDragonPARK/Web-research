@@ -17,8 +17,36 @@
             text-align: center;
         }
 
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+
         h1 {
-            margin-bottom: 1rem;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+        }
+
+        .report-box {
+            padding: 3rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--glass-border);
+            background: var(--bg-card);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: 3rem;
+            margin: 0;
         }
 
         #debug-info {
@@ -31,13 +59,34 @@
 
 <body>
     <div class="bg-gradient"></div>
-    <h1>보고서 상세 페이지</h1>
-    <p id="debug-info">데이터 로딩 중...</p>
-    <a href="index.html" class="btn btn-primary">← 돌아가기</a>
+    <div class="container">
+        <h1>보고서 상세 페이지</h1>
+        <div class="report-box card">
+            <p class="label">Project ID</p>
+            <h2 id="report-id">--</h2>
+            <div id="status-message" style="margin-top: 1rem; color: var(--text-muted);">
+                데이터를 분석 중입니다...
+            </div>
+        </div>
+        <a href="index.html" class="btn btn-primary">← 돌아가기</a>
+    </div>
+
     <script>
-        const params = new URLSearchParams(window.location.search);
-        document.getElementById('debug-info').innerText =
-            '요청된 Report ID: ' + params.get('id');
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            const idDisplay = document.getElementById('report-id');
+            const statusMsg = document.getElementById('status-message');
+
+            if (id) {
+                idDisplay.innerText = id;
+                idDisplay.style.color = 'var(--accent)';
+            } else {
+                idDisplay.innerText = 'N/A';
+                statusMsg.innerText = '올바른 경로로 접근해 주세요. (ID 누락)';
+                statusMsg.style.color = '#ef4444';
+            }
+        });
     </script>
 </body>
 

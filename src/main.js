@@ -51,7 +51,8 @@ function renderProjects() {
     // Click → navigate (Ready only)
     if (!isWIP) {
       card.addEventListener('click', () => {
-        window.location.href = `view.html?id=${project.id}`;
+        console.log(`Navigating to project ${project.id}`);
+        window.location.href = `./view.html?id=${project.id}`;
       });
     }
 
@@ -79,6 +80,7 @@ function renderProjects() {
       </div>
       <p>${project.summary}</p>
       <div class="card__tags">${tagsHtml}</div>
+      ${!isWIP ? '<div class="card__footer"><span class="read-more">리서치 보기 <span class="arrow">→</span></span></div>' : ''}
     `;
 
     grid.appendChild(card);
