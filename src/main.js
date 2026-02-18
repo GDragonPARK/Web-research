@@ -43,20 +43,34 @@ function renderProjects() {
   if (!grid) return;
   grid.innerHTML = '';
 
-  PROJECTS.forEach((project, index) => {
+  PROJECTS.forEach((project) => {
     const isWIP = project.status === 'WIP';
     const card = document.createElement('div');
     card.className = `card${isWIP ? ' card--wip' : ''}`;
-    card.style.animationDelay = `${index * 0.1}s`;
 
+    // Click → navigate (Ready only)
+    if (!isWIP) {
+      card.addEventListener('click', () => {
+        window.location.href = `view.html?id=${project.id}`;
+      });
+    }
+
+    // Image: real <img> or gradient placeholder
     const shortLabel = project.title.includes(':')
       ? project.title.split(':')[0].trim()
       : project.title.substring(0, 12);
 
+    const imageHtml = project.image
+      ? `<div class="card__image"><img src="${project.image}" alt="${project.title}"></div>`
+      : `<div class="project-img"><span class="project-img__label">${shortLabel}</span></div>`;
+
+    // Tags
+    const tagsHtml = project.tags
+      .map(t => `<span class="skill-tag skill-tag--sm">${t}</span>`)
+      .join('');
+
     card.innerHTML = `
-      <div class="project-img">
-        <span class="project-img__label">${shortLabel}</span>
-      </div>
+      ${imageHtml}
       <div class="card__header">
         <h3>${project.title}</h3>
         ${isWIP
@@ -64,16 +78,17 @@ function renderProjects() {
         : '<span class="card__badge card__badge--ready">✦ Ready</span>'}
       </div>
       <p>${project.summary}</p>
-      <div class="card__tags">
-        ${project.tags.map(t => `<span class="skill-tag skill-tag--sm">${t}</span>`).join('')}
-      </div>
+      <div class="card__tags">${tagsHtml}</div>
     `;
 
     grid.appendChild(card);
-  });
 
-  // Apply scroll reveal to dynamically created cards
-  revealOnScroll(grid.querySelectorAll('.card'));
+    // Scroll reveal — explicit per-card observer registration
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(30px)';
+    card.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+    observer.observe(card);
+  });
 }
 
 // ── Init ──

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research View</title>
+    <link rel="stylesheet" href="./src/style.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 1rem;
+        }
+
+        #debug-info {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <h1>보고서 상세 페이지</h1>
+    <p id="debug-info">데이터 로딩 중...</p>
+    <a href="index.html" class="btn btn-primary">← 돌아가기</a>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        document.getElementById('debug-info').innerText =
+            '요청된 Report ID: ' + params.get('id');
+    </script>
+</body>
+
+</html>
